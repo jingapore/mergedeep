@@ -15,6 +15,8 @@ class Strategy(Enum):
     ADDITIVE = 1
     # Raise `TypeError` when `destination` and `source` types differ.
     TYPESAFE = 2
+    # Combine `list` with `str`, `int`, or `float`
+    ADDITIVE_MIXED = 3
 
 
 def _handle_merge_replace(destination, source, key):
@@ -37,6 +39,14 @@ def _handle_merge_additive(destination, source, key):
         _handle_merge[Strategy.REPLACE](destination, source, key)
 
 
+def _handle_merge_additive_mixed(destination, source, key):
+    if isinstance(destination[key], list) and isinstance(source[key], (str,int,float)):
+        #Append to destination list
+        destination[key].append(deepcopy(source[key]))
+    if isinstance(destination[key], (str,int,float)) and isinstance(source[key], list):
+        #Append to source list
+        destination[key] = deepcopy(source[key]) + [destination[key]]
+
 def _handle_merge_typesafe(destination, source, key):
     # Raise a TypeError if the destination and source types differ.
     if type(destination[key]) is not type(source[key]):
@@ -51,6 +61,7 @@ _handle_merge = {
     Strategy.REPLACE: _handle_merge_replace,
     Strategy.ADDITIVE: _handle_merge_additive,
     Strategy.TYPESAFE: _handle_merge_typesafe,
+    Strategy.ADDITIVE_MIXED: _handle_merge_additive_mixed
 }
 
 
