@@ -90,8 +90,9 @@ def merge(
             if key in destination:
                 if isinstance(destination[key], Mapping) and isinstance(
                     source[key], Mapping
-                ):
-                    # If the key for both `destination` and `source` are Mapping types, then recurse.
+                ) and type(destination[key])==type(source[key]):
+                    # If the val for both `destination` and `source` are Mapping types, then recurse.
+                    # Also the val for both `destination` and `source` to be the same types, i.e. not list and dict.
                     _deepmerge(destination[key], source[key])
                 elif destination[key] == source[key]:
                     # If a key exists in both objects and the values are `same`, the value from the `destination` object will be used.
