@@ -106,3 +106,6 @@ venv.bak/
 .mypy_cache/
 
 coverage
+
+# hidden tests
+.mergedeep/test_do_not_commit.py
