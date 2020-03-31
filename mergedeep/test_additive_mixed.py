@@ -23,8 +23,8 @@ def source_has_more_fields():
 
 def twice_nested_list():
 
-    dict_1 = {'a': [{'b':[{'c':None}]}], 'f':None}
-    dict_2 = {'a': {'b':{'c':'foo'}}, 'f':'bar'}
+    dict_1 = {'a': [{'b':{'e':None,'c':[{'d':None}]}}], 'f':None}
+    dict_2 = {'a': [{'b':{'e':'foobar','c':{'d':'foo'}}},{'b':{'e':'foobar','c':{'d':'foo'}}}], 'f':'bar'}
     
     return mergedeep.merge(dict_1, dict_2, strategy=mergedeep.Strategy.ADDITIVE_MIXED)
 

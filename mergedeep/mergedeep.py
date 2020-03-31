@@ -20,8 +20,15 @@ class Strategy(Enum):
 
 
 def _handle_merge_replace(destination, source, key):
-    # If a key exists in both objects and the values are `different`, the value from the `source` object will be used.
-    destination[key] = deepcopy(source[key])
+    if not isinstance(destination[key], list):
+        # If a key exists in both objects and the values are `different`, the value from the `source` object will be used.
+        destination[key] = deepcopy(source[key])
+    else:
+        # As _handle_merge_replace is base case for recursion,
+        # we must never end with list.
+        # Which is OK since we do coerce blanks, incl empty lists, to have None
+        # We also assume that there is no list immediately within a list.
+        destination[key] = [merge(destination[key][0], source_item, strategy=Strategy.ADDITIVE_MIXED)for source_item in source[key]]
 
 
 def _handle_merge_additive(destination, source, key):
@@ -44,8 +51,9 @@ def _handle_merge_additive_mixed(destination, source, key):
         source[key] = deepcopy(destination[key])
         _handle_merge[Strategy.REPLACE](destination, source, key)
     elif isinstance(destination[key], list) and isinstance(source[key], dict):
-   
-        source[key] = [merge(destination[key][0], source[key], strategy=Strategy.ADDITIVE_MIXED)]
+        # source[key] = [merge(destination[key][0], source[key], strategy=Strategy.ADDITIVE_MIXED)]
+        source[key] = [source[key]]
+        _handle_merge[Strategy.REPLACE](destination, source, key)
         # _handle_merge[Strategy.ADDITIVE_MIXED](destination, source, key)     
         # print('test')
 
@@ -53,6 +61,8 @@ def _handle_merge_additive_mixed(destination, source, key):
     #     #Append to source list
     #     #May not be needed
     #     destination[key] = deepcopy(source[key]) + [destination[key]]
+    # elif (isinstance(destination[key], dict) and isinstance(source[key], dict)) or (isinstance(destination[key], list) and isinstance(source[key], list)):
+    #     source[key] = [merge(destination[key][0], source[key], strategy=Strategy.ADDITIVE_MIXED)]
     else:
         _handle_merge[Strategy.REPLACE](destination, source, key)
 
