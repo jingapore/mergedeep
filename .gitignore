@@ -108,4 +108,4 @@ venv.bak/
 coverage
 
 # hidden tests
-.mergedeep/test_do_not_commit.py
+mergedeep/test_do_not_commit.py
