@@ -43,9 +43,13 @@ def _handle_merge_additive_mixed(destination, source, key):
     if isinstance(destination[key], list) and isinstance(source[key], (type(None))):
         source[key] = deepcopy(destination[key])
         _handle_merge[Strategy.REPLACE](destination, source, key)
-    if isinstance(destination[key], (str, int, float, dict)) and isinstance(source[key], list):
-        #Append to source list
-        destination[key] = deepcopy(source[key]) + [destination[key]]
+    elif isinstance(destination[key], list) and isinstance(source[key], dict):
+        source[key] = [deepcopy(source[key])]
+        _handle_merge[Strategy.REPLACE](destination, source, key)
+    # elif isinstance(destination[key], (str, int, float, dict)) and isinstance(source[key], list):
+    #     #Append to source list
+    #     #May not be needed
+    #     destination[key] = deepcopy(source[key]) + [destination[key]]
     else:
         _handle_merge[Strategy.REPLACE](destination, source, key)
 
